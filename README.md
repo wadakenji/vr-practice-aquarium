@@ -1,2 +1,2 @@
 # vr-practice-aquarium
-a-frame practice
+VR study project using a-frame
