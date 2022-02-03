@@ -23,16 +23,31 @@
       const color = `#${Math.floor((Math.random() * Math.pow(16, 6))).toString(16).padStart(6, '0')}`
 
       const volume = Math.random() + 0.3
-      const scale = [Math.random() * 0.5, Math.random() * 1.5 + 1, Math.random() * 3 + 3].map(s => s * volume)
+      const bodyScale = [Math.random() * 0.3 + 0.2, Math.random() * 1.5 + 1, Math.random() * 3 + 3].map(s => s * volume)
+      const eyeScale = [...Array(3)].map(() => bodyScale[0] * 0.4)
+      const eyePosition = [bodyScale[0] / 2, bodyScale[1] / 10, bodyScale[2] / 2 * 0.8]
 
-      const box = document.createElement('a-box')
-      box.setAttribute("color", color)
-      box.setAttribute('scale', scale.join(' '))
-      scene.append(box)
+      const entity = document.createElement('a-entity')
+      const body = document.createElement('a-box')
+      body.setAttribute("color", color)
+      body.setAttribute('scale', bodyScale.join(' '))
+      const eye1 = document.createElement('a-sphere')
+      eye1.setAttribute('color', '#000')
+      eye1.setAttribute('position', eyePosition.join(' '))
+      eye1.setAttribute('scale', eyeScale.join(' '))
+      eyePosition[0] = -eyePosition[0]
+      const eye2 = document.createElement('a-sphere')
+      eye2.setAttribute('color', '#000')
+      eye2.setAttribute('position', eyePosition.join(' '))
+      eye2.setAttribute('scale', eyeScale.join(' '))
+      entity.append(body)
+      entity.append(eye1)
+      entity.append(eye2)
+      scene.append(entity)
 
       const initialAcceleration = [Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5]
       return {
-        element: box,
+        element: entity,
         acceleration: initialAcceleration,
         speed: initialAcceleration.map(a => a * 100),
         position: size.map(p => generateRandomPosition(p) * 20000)
