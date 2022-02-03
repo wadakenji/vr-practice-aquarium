@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html style="height:100%">
+<head>
+  <script type='text/javascript' src='https://aframe.io/releases/1.2.0/aframe.min.js'></script>
+  <script type='text/javascript' src='https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js'></script>
+  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js'></script>
+  <script type='text/javascript' src='https://unpkg.com/networked-aframe/dist/networked-aframe.min.js'></script>
+  <meta charset="UTF-8">
+  <a id="myEnterARButton" href="#"></a>
+</head>
+<body style='height:100%'>
+<script type="text/javascript">
+  const generateRandomPosition = (size) => (Math.random() - 0.5) * size
+  const convertRadToDeg = (rad) => rad * 180 / Math.PI
+  const size = [40, 16, 40]
+  const boxCount = 50
+
+  window.addEventListener("load", () => {
+    let scene = document.querySelector("a-scene");
+    const boxes = [...Array(boxCount)].map(() => {
+      const color = `#${Math.floor((Math.random() * Math.pow(16, 6))).toString(16)}`
+
+      const volume = Math.random() + 0.3
+      const scale = [Math.random() * 0.5, Math.random() * 1.5 + 1, Math.random() * 3 + 3].map(s => s * volume)
+
+      const box = document.createElement('a-box')
+      box.setAttribute("color", color)
+      box.setAttribute('scale', scale.join(' '))
+      scene.append(box)
+
+      const initialAcceleration = [Math.random() - 0.5 ,Math.random() - 0.5 ,Math.random() - 0.5]
+      return {
+        element: box,
+        acceleration: initialAcceleration,
+        speed: initialAcceleration.map(a => a * 100),
+        position: size.map(p => generateRandomPosition(p) * 20000)
+      }
+    })
+
+    const fish = document.createElement('a-gltf-model')
+    fish.setAttribute('src', '#fish')
+    fish.setAttribute('scale', '0.3 0.3 0.3')
+    scene.append(fish)
+
+    boxes.push({
+      element: fish,
+      acceleration: [0, 0, 0],
+      speed: [0, 0, 0],
+      position: [0, 0, 0]
+    })
+
+    let frame = 1
+    setInterval(() => {
+      frame++
+
+      boxes.forEach((box) => {
+        box.acceleration = box.acceleration.map((a, i) => a + (Math.random() * 2 - 1 - (box.speed[i] / frame) - (box.position[i] / 10000 / (frame ** 2) )) / 100)
+        box.speed = box.speed.map((s, i) => s + box.acceleration[i])
+        box.position= box.position.map((p, i) => {
+          const newPosition = p + box.speed[i]
+          if (newPosition > (size[i] / 2) * 20000) return (size[i] / 2) * 20000
+          else if (newPosition < -(size[i] / 2) * 20000) return -(size[i] / 2) * 20000
+          else return newPosition
+        })
+
+        const rotationY = convertRadToDeg(Math.atan2(box.speed[0], box.speed[2]))
+        const rotationX = -convertRadToDeg(Math.atan2(box.speed[1], Math.sqrt(box.speed[0] ** 2 + box.speed[2] ** 2)))
+
+        box.element.setAttribute('position', box.position.map(p => p / 20000).join(' '))
+        box.element.setAttribute('rotation', `${rotationX} ${rotationY} 0`)
+      })
+    }, 1000 / 30)
+  });
+</script>
+
+<a-scene embedded="" blockvrock-init="" blockvrock-edited-code="" vr-mode-handler="" renderer="colorManagement: true" vr-mode-ui="enterARButton: #myEnterARButton" ui-controller="rig:#rig">
+  <a-assets>
+    <img id="waterTexture" src="https://aframe.io/sample-assets/assets/images/noise/water.jpg"/>
+    <img id="wallTexture" src="/assets/wallTexture.jpeg"/>
+    <a-asset-item id="fish" src="/assets/fish_skeleton/scene.gltf"></a-asset-item>
+  </a-assets>
+  <a-camera
+      position="0 -9 0"
+      cursor-visible="true"
+      cursor-scale="2"
+      cursor-color="#0095DD"
+      cursor-opacity="0.5">
+  </a-camera>
+  <a-sky color="#083063"></a-sky>
+
+  <a-light type="directional" color="#082b72" intensity="0.5" position="20 10 0"></a-light>
+  <a-light type="spot" intensity="1" position="16 10 20" angle="5" rotation="-29 0 0"></a-light>
+  <a-light type="spot" intensity="1" position="16 10 -20" angle="5" rotation="-151 0 0"></a-light>
+  <a-light type="spot" intensity="1" position="-16 10 20" angle="5" rotation="-29 0 0"></a-light>
+  <a-light type="spot" intensity="1" position="-16 10 -20" angle="5" rotation="-151 0 0"></a-light>
+  <a-light type="point" intensity="0.5" position="0 -10 0" angle="180" rotation="90 0 0" color="#e8efff"></a-light>
+
+  <a-plane position="0 -10 0" rotation="-90 0 0" color="#888" width="1000" height="1000"></a-plane>
+</a-scene>
+</body>
+</html>
