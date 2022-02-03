@@ -18,7 +18,7 @@
   window.addEventListener("load", () => {
     let scene = document.querySelector("a-scene");
     const boxes = [...Array(boxCount)].map(() => {
-      const color = `#${Math.floor((Math.random() * Math.pow(16, 6))).toString(16)}`
+      const color = `#${Math.floor((Math.random() * Math.pow(16, 6))).toString(16).padStart(6, '0')}`
 
       const volume = Math.random() + 0.3
       const scale = [Math.random() * 0.5, Math.random() * 1.5 + 1, Math.random() * 3 + 3].map(s => s * volume)
