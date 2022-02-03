@@ -2,8 +2,10 @@
 <html style="height:100%">
 <head>
   <script type='text/javascript' src='https://aframe.io/releases/1.2.0/aframe.min.js'></script>
-  <script type='text/javascript' src='https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js'></script>
-  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js'></script>
+  <script type='text/javascript'
+          src='https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js'></script>
+  <script type='text/javascript'
+          src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js'></script>
   <script type='text/javascript' src='https://unpkg.com/networked-aframe/dist/networked-aframe.min.js'></script>
   <meta charset="UTF-8">
   <a id="myEnterARButton" href="#"></a>
@@ -16,7 +18,7 @@
   const boxCount = 50
 
   window.addEventListener("load", () => {
-    let scene = document.querySelector("a-scene");
+    let scene = document.querySelector("a-scene")
     const boxes = [...Array(boxCount)].map(() => {
       const color = `#${Math.floor((Math.random() * Math.pow(16, 6))).toString(16).padStart(6, '0')}`
 
@@ -28,7 +30,7 @@
       box.setAttribute('scale', scale.join(' '))
       scene.append(box)
 
-      const initialAcceleration = [Math.random() - 0.5 ,Math.random() - 0.5 ,Math.random() - 0.5]
+      const initialAcceleration = [Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5]
       return {
         element: box,
         acceleration: initialAcceleration,
@@ -54,9 +56,11 @@
       frame++
 
       boxes.forEach((box) => {
-        box.acceleration = box.acceleration.map((a, i) => a + (Math.random() * 2 - 1 - (box.speed[i] / frame) - (box.position[i] / 10000 / (frame ** 2) )) / 100)
+        box.acceleration = box.acceleration.map(
+          (a, i) => a + (Math.random() * 2 - 1 - (box.speed[i] / frame) - (box.position[i] / 10000 / (frame ** 2))) / 100
+        )
         box.speed = box.speed.map((s, i) => s + box.acceleration[i])
-        box.position= box.position.map((p, i) => {
+        box.position = box.position.map((p, i) => {
           const newPosition = p + box.speed[i]
           if (newPosition > (size[i] / 2) * 20000) return (size[i] / 2) * 20000
           else if (newPosition < -(size[i] / 2) * 20000) return -(size[i] / 2) * 20000
@@ -70,10 +74,11 @@
         box.element.setAttribute('rotation', `${rotationX} ${rotationY} 0`)
       })
     }, 1000 / 30)
-  });
+  })
 </script>
 
-<a-scene embedded="" blockvrock-init="" blockvrock-edited-code="" vr-mode-handler="" renderer="colorManagement: true" vr-mode-ui="enterARButton: #myEnterARButton" ui-controller="rig:#rig">
+<a-scene embedded="" blockvrock-init="" blockvrock-edited-code="" vr-mode-handler="" renderer="colorManagement: true"
+         vr-mode-ui="enterARButton: #myEnterARButton" ui-controller="rig:#rig">
   <a-assets>
     <a-asset-item id="fish" src="./assets/fish_skeleton/scene.gltf"></a-asset-item>
   </a-assets>
